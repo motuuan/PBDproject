@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录</title>
+    <style>
+        body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f5f5;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+    }
+
+    .header {
+        width: 100%;
+        height: 40px;
+        background: rgba(255, 255, 255, 1);
+        border-bottom: 1px solid rgba(102, 102, 102, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        box-sizing: border-box;
+    }
+
+    .header-content {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .header .logo img {
+        height: 35px;
+    }
+
+    .header .auth-buttons {
+        display: flex;
+    }
+
+    .header .auth-buttons button {
+        margin-left: 10px;
+        padding: 5px 10px; /* Adjusted to fit header height */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px; /* Adjusted to fit header height */
+    }
+
+    .header .login-button {
+        background-color: #fff;
+        color: #000;
+        border: 1px solid #000;
+    }
+
+    .header .register-button {
+        background-color: #000;
+        color: #fff;
+    }
+
+    .header .login-button:hover,
+    .header .register-button:hover {
+        opacity: 0.8;
+    }
+
+    .container {
+        display: flex;
+        flex: 1;
+        max-width: 100%; /* Adjusted to 90% of the viewport width */
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 20px auto; /* Adjusted for centering */
+        height: calc(100% - 72px - 40px); /* Adjusted for header height and margins */
+    }
+
+
+    .image-container {
+        flex: 1;
+    }
+
+    .image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .login-container {
+        flex: 1;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    h2 {
+        margin-bottom: 10px;
+        font-size: 24px;
+    }
+
+    p {
+        margin-bottom: 20px;
+        color: #777;
+    }
+
+    .input-group {
+        margin-bottom: 20px;
+    }
+
+    .input-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: normal; /* Changed to normal */
+        color: #777; /* Changed to gray */
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        margin-right: 10px;
+    }
+
+    .checkbox-group label {
+        font-weight: normal; /* Changed to normal */
+        color: #777; /* Changed to gray */
+    }
+
+    .input-group input[type="text"],
+    .input-group input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        background-color: #555;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #333;
+    }
+
+    a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+    .forgot-password {
+        display: block;
+        margin-top: 10px;
+        color: #333;
+        text-decoration: none;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: -20px; /* Adjust this value to position it properly */
+    }
+    /* 模态窗口的样式 */
+    .modal {
+        display: none; /* 默认隐藏 */
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4); /* 背景色 */
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 300px;
+        text-align: center;
+        border-radius: 10px;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .modal-title {
+        font-size: 1.5em;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/loginstyles.css') }}">
+    <script>
+        function forgotPassword() {
+            var username = document.getElementById('username').value;
+            if (username === '') {
+                alert('请输入用户名以检索密码');
+                return;
+            }
+            fetch(`/user/forgot_password?username=${username}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 0) {
+                        alert(`您的密码是: ${data.password}`);
+                    } else {
+                        alert(data.message);
+                    }
+                });
+        }
+    </script>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <img src="logo.png" alt="Logo">
+            </div>
+            <div class="auth-buttons">
+                <button class="login-button">登录</button>
+                <button class="register-button">注册</button>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <div class="image-container">
+            <img src="{{ url_for('static', filename='webimage/pbdloginback.jpg') }}" alt="Cat Image">
+        </div>
+        <div class="login-container">
+            <h2>立刻登录</h2>
+            <p>观察您的爱宠目前都在做什么</p>
+            <form id="login-form" action="{{ url_for('user.login') }}" method="POST">
+                <div class="input-group">
+                    <label for="Uid">请输入账号</label>
+                    <input type="text" id="Uid" name="Uid" required>
+                </div>
+                <div class="input-group">
+                    <label for="Upassword">请输入密码</label>
+                    <input type="password" id="Upassword" name="Upassword" required>
+                </div>
+                <button type="submit">确认登录</button>
+                <a href="javascript:void(0);" onclick="forgotPassword()" class="forgot-password" style="display: block; margin-top: 10px; color: #333; text-decoration: none;">忘记密码</a>
+            </form>
+            <p>您还未注册账号？ <a href="{{ url_for('user.register') }}">立刻注册</a></p>
+        </div>
+    </div>
+
+    {% if message %}
+    <script>
+        alert("{{ message }}");
+    </script>
+    {% endif %}
+
+    <!-- 模态窗口 -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="modal-title">提示</div>
+            <p id="modal-message"></p>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <script>
+                // 显示模态窗口
+                function showModal(message) {
+                    var modal = document.getElementById("myModal");
+                    var modalMessage = document.getElementById("modal-message");
+                    var span = document.getElementsByClassName("close")[0];
+
+                    modalMessage.textContent = message;
+                    modal.style.display = "block";
+
+                    // 点击 <span> (x) 关闭模态窗口
+                    span.onclick = function() {
+                        modal.style.display = "none";
+                    }
+
+                    // 点击模态窗口外部关闭模态窗口
+                    window.onclick = function(event) {
+                        if (event.target == modal) {
+                            modal.style.display = "none";
+                        }
+                    }
+                }
+
+                // 获取消息并显示模态窗口
+                {% for category, message in messages %}
+                    showModal("{{ message }}");
+                {% endfor %}
+            </script>
+        {% endif %}
+    {% endwith %}
+</body>
+</html>
