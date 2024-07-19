@@ -178,9 +178,10 @@
 <div class="container">
     <div class="section">
         <div class="profile-picture-container">
+            <img src="data:image/jpeg;base64, {{ user.Uheadshot }}" alt="用户头像" class="profile-picture">
             <div class="upload-overlay">
                 <label for="Uheadshot" class="upload-label">上传头像</label>
-                <input type="file" id="Uheadshot" name="Uheadshot" accept="image/*" style="display: none;" form="update-form"  >
+                <input type="file" id="Uheadshot" name="Uheadshot" accept="image/*" style="display: none;" form="update-form">
             </div>
         </div>
         <h2 class="centered-title">个人信息</h2>

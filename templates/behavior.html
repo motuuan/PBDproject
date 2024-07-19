@@ -195,7 +195,7 @@
                     <div class="weather" id="weather">今日天气：晴🌤 27℃</div>
                 </div>
                 <div class="user-info">
-                    <img src="{{ url_for('static', filename='uploadusers/headtest.jpg') }}" alt="用户头像" class="avatar">
+                    <img src="data:image/jpeg;base64, {{ user.Uheadshot }}" alt="用户头像" class="avatar">
                     <div class="username">您好，<span>{{ user.Uname }}</span></div>
                 </div>
                 <div class="nav-section">
