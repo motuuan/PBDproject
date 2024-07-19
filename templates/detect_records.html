@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>检测记录</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        header {
+            height: 40px;
+            background-color: #007BFF;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            color: white;
+        }
+
+        header img {
+            height: 30px;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+        }
+
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        td img {
+            max-width: 80px;
+            max-height: 80px;
+            border-radius: 4px;
+        }
+
+        .mrclassify-link {
+            text-align: center;
+            margin: 20px;
+        }
+
+        .mrclassify-link a {
+            color: #007BFF;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .mrclassify-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='webimage/logo - white.png') }}" alt="Logo">
+        <a href="{{ url_for('user.dashboard') }}">回到主页</a>
+    </header>
+
+    <h1>检测记录</h1>
+    <table>
+        <tr>
+            <th>用户账号</th>
+            <th>检测时间</th>
+            <th>检测结果</th>
+            <th>置信度</th>
+            <th>图片</th>
+        </tr>
+        {% for record in records %}
+        <tr>
+            <td>{{ record.Bowner_id }}</td>
+            <td>{{ record.Btime }}</td>
+            <td>{{ record.Bclass }}</td>
+            <td>{{ record.Bconfidence }}</td>
+            <td>
+                <img src="data:image/jpeg;base64,{{ record.Bphoto }}" alt="检测图片">
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div class="mrclassify-link">
+        <p>展示完毕<a href="{{ url_for('user.dashboard') }}">返回</a></p>
+    </div>
+</body>
+</html>

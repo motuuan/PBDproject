@@ -1,10 +1,244 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宠物智能监控系统</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #f5e6cc, rgba(245, 230, 204, 0));
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            align-items: center;
+        }
+
+        .header {
+            width: 100%;
+            height: 40px;
+            background: #fff; /* 白色背景 */
+            border-bottom: 1px solid rgba(102, 102, 102, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 60px; /* 加大左右边距 */
+            box-sizing: border-box;
+        }
+
+        .header .logo img {
+            height: 35px;
+        }
+
+        .header .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header .nav-button {
+            background-color: #000;
+            color: #fff;
+            padding: 5px 12px; /* 减短按钮 */
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .header .nav-button:hover {
+            opacity: 0.8;
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+            width: calc(100% - 120px); /* 左右各空出60px */
+            margin: 20px 60px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            height: calc(100% - 80px); /* 考虑到header和margin */
+        }
+
+        .sidebar {
+            width: 30%;
+            padding: 20px;
+            box-sizing: border-box;
+            border-right: 1px solid rgba(102, 102, 102, 0.25);
+            overflow-y: auto;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .sidebar .top-section {
+            text-align: center;
+        }
+
+        .sidebar .time-weather .date,
+        .sidebar .time-weather .weekday,
+        .sidebar .time-weather .weather {
+            font-size: 14px;
+            color: #777;
+        }
+
+        .sidebar .time-weather .time {
+            font-size: 48px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .sidebar .user-info {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .sidebar .user-info .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .sidebar .user-info .username {
+            font-size: 14px;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .sidebar .nav-section {
+            margin-bottom: 20px;
+        }
+
+        .sidebar .nav-button {
+            display: block;
+            width: 70%;
+            padding: 10px;
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 10px auto;
+            font-size: 16px;
+        }
+
+        .sidebar .nav-button:hover {
+            background-color: #333;
+        }
+
+        .sidebar .bottom-section {
+            text-align: center;
+        }
+
+        .sidebar .bottom-section img {
+            width: 90%;
+            max-width: 200px;
+        }
+
+        .main-content {
+            width: 70%;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #f0f0f0;
+        }
+
+        .main-content h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .main-content .monitor {
+            width: 100%;
+            height: calc(100% - 40px); /* 考虑到h2的高度 */
+            background-color: #000;
+            border-radius: 10px;
+        }
+        .main-content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1px;
+        }
+
+        .main-content-header h2 {
+            margin: 0; /* 与装饰图片的间距 */
+        }
+
+        .main-content-header .monitor-decorative-image {
+            height: 40px; /* 调整为合适的高度 */
+        }
+    </style>
 </head>
 <body>
+    <header class="header">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='webimage/logo.png') }}" alt="Logo">
+        </div>
+        <div class="nav-buttons">
+            <a href="dashboard" class="nav-button">首页</a>
+            <a href="update_info" class="nav-button">用户中心</a>
+        </div>
+    </header>
+    <div class="container">
+        <div class="sidebar">
+            <div class="top-section">
+                <div class="time-weather">
+                    <div class="date" id="current-date">年/月/日</div>
+                    <div class="weekday" id="current-weekday">星期几</div>
+                    <div class="time" id="current-time">时:分</div>
+                    <div class="weather" id="weather">今日天气：晴🌤 27℃</div>
+                </div>
+                <div class="user-info">
+                    <img src="{{ url_for('static', filename='uploadusers/headtest.jpg') }}" alt="用户头像" class="avatar">
+                    <div class="username">您好，<span>{{ user.Uname }}</span></div>
+                </div>
+                <div class="nav-section">
+                    <a href="dashboard" class="nav-button">查看监控</a>
+                    <a href="update_info" class="nav-button">用户中心</a>
+                    <a href="/pet/pet_register" class="nav-button">添加宠物</a>
+                    <a href="/pet/view_pet" class="nav-button">宠物信息</a>
+                    <a href="/video/get_records" class="nav-button">记录查询</a>
+                    <a href="/video/watchchart" class="nav-button">行为分析</a>
 
+                </div>
+            </div>
+            <div class="bottom-section">
+                <img src="{{ url_for('static', filename='webimage/menudec.jpg') }}" alt="装饰图片">
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="main-content-header">
+                <h2>监控画面▶</h2>
+                <img src="{{ url_for('static', filename='webimage/monitordec2.png') }}" alt="装饰图片" class="monitor-decorative-image">
+            </div>
+            <div class="monitor" id="monitor-feed">
+                <img src="{{ url_for('video.video_feed') }}" style="max-width: 100%; height: auto;">
+            </div>
+        </div>
+    </div>
+    <script>
+        // JavaScript 代码获取当前时间
+        function updateTime() {
+            const now = new Date();
+            const date = now.toLocaleDateString();
+            const options = { weekday: 'long' };
+            const weekday = new Intl.DateTimeFormat('zh-CN', options).format(now);
+            const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('current-date').innerText = date;
+            document.getElementById('current-weekday').innerText = weekday;
+            document.getElementById('current-time').innerText = time;
+        }
+
+        setInterval(updateTime, 1000); // 每秒更新一次时间
+
+        // 初始调用一次以显示当前时间
+        updateTime();
+    </script>
 </body>
 </html>

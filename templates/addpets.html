@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>添加宠物信息</title>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .button-link {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .button-link:hover {
+            background-color: #0056b3;
+        }
+        .header img {
+            height: 40px;
+        }
+        .header a {
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .container {
+            width: 50%;
+            margin: 40px auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            margin-bottom: 10px;
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+        }
+        .section label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .section input, .section select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .section button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .section button:hover {
+            background-color: #0056b3;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <img src="{{ url_for('static', filename='webimage/logo - black.png') }}" alt="Logo">
+    <a href="/user/dashboard" class="button-link">回到主页</a>
+</div>
+
+<div class="container">
+    <div class="section">
+        <h2>添加宠物信息</h2>
+        <form action="{{ url_for('pet.pet_register') }}" method="post" enctype="multipart/form-data">
+            <label for="Pname">宠物昵称</label>
+            <input type="text" id="Pname" name="Pname" required>
+
+            <label for="Pimage">宠物照片</label>
+            <input type="file" id="Pimage" name="Pimage" accept="image/*" required>
+
+            <label for="Pgender">宠物性别</label>
+            <select id="Pgender" name="Pgender" required>
+                <option value="">请选择性别</option>
+                <option value="male">公</option>
+                <option value="female">母</option>
+            </select>
+
+            <label for="Pvariety">宠物品种</label>
+            <input type="text" id="Pvariety" name="Pvariety" required>
+
+            <label for="Pbirth_year">宠物生日</label>
+            <div class="birth-select">
+                <select id="Pbirth_year" name="Pbirth_year" required>
+                    <option value="">年</option>
+                    {% for year in range(2000, 2025) %}
+                        <option value="{{ year }}">{{ year }}</option>
+                    {% endfor %}
+                </select>
+                <select id="Pbirth_month" name="Pbirth_month" required>
+                    <option value="">月</option>
+                    {% for month in range(1, 13) %}
+                        <option value="{{ month }}">{{ month }}</option>
+                    {% endfor %}
+                </select>
+                <select id="Pbirth_day" name="Pbirth_day" required>
+                    <option value="">日</option>
+                    {% for day in range(1, 32) %}
+                        <option value="{{ day }}">{{ day }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="centered-button">提交</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

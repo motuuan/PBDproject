@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宠物智能监控系统</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #f5e6cc, rgba(245, 230, 204, 0));
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            align-items: center;
+        }
+
+        .header {
+            width: 100%;
+            height: 40px;
+            background: #fff; /* 白色背景 */
+            border-bottom: 1px solid rgba(102, 102, 102, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 60px; /* 加大左右边距 */
+            box-sizing: border-box;
+        }
+
+        .header .logo img {
+            height: 35px;
+        }
+
+        .header .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header .nav-button {
+            background-color: #000;
+            color: #fff;
+            padding: 5px 12px; /* 减短按钮 */
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .header .nav-button:hover {
+            opacity: 0.8;
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+            width: calc(100% - 120px); /* 左右各空出60px */
+            margin: 20px 60px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            height: calc(100% - 80px); /* 考虑到header和margin */
+        }
+
+        .sidebar {
+            width: 30%;
+            padding: 20px;
+            box-sizing: border-box;
+            border-right: 1px solid rgba(102, 102, 102, 0.25);
+            overflow-y: auto;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .sidebar .top-section {
+            text-align: center;
+        }
+
+        .sidebar .time-weather .date,
+        .sidebar .time-weather .weekday,
+        .sidebar .time-weather .weather {
+            font-size: 14px;
+            color: #777;
+        }
+
+        .sidebar .time-weather .time {
+            font-size: 48px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .sidebar .user-info {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .sidebar .user-info .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .sidebar .user-info .username {
+            font-size: 14px;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .sidebar .nav-section {
+            margin-bottom: 20px;
+        }
+
+        .sidebar .nav-button {
+            display: block;
+            width: 70%;
+            padding: 10px;
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 10px auto;
+            font-size: 16px;
+        }
+
+        .sidebar .nav-button:hover {
+            background-color: #333;
+        }
+
+        .sidebar .bottom-section {
+            text-align: center;
+        }
+
+        .sidebar .bottom-section img {
+            width: 90%;
+            max-width: 200px;
+        }
+
+        .main-content {
+            width: 70%;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #f0f0f0;
+        }
+
+        .main-content h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .main-content .monitor {
+            width: 100%;
+            height: calc(100% - 40px); /* 考虑到h2的高度 */
+            background-color: #000;
+            border-radius: 10px;
+        }
+        .main-content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1px;
+        }
+
+        .main-content-header h2 {
+            margin: 0; /* 与装饰图片的间距 */
+        }
+
+        .main-content-header .monitor-decorative-image {
+            height: 40px; /* 调整为合适的高度 */
+        }
+        .main-content .charts-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .charts-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .pie-chart, .line-chart {
+            width: 48%; /* 留出一些空间作为间隔 */
+            height: 300px; /* 或者其他适合的高度 */
+        }
+
+        .stats-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stats-item {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 200px;
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stats-icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .stats-text {
+            text-align: center;
+        }
+
+        .stats-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stats-label {
+            font-size: 14px;
+            color: #777;
+        }
+
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='webimage/logo.png') }}" alt="Logo">
+        </div>
+        <div class="nav-buttons">
+            <a href="/user/dashboard" class="nav-button">首页</a>
+            <a href="/user/update_info" class="nav-button">用户中心</a>
+        </div>
+    </header>
+    <div class="container">
+        <div class="sidebar">
+            <div class="top-section">
+                <div class="time-weather">
+                    <div class="date" id="current-date">年/月/日</div>
+                    <div class="weekday" id="current-weekday">星期几</div>
+                    <div class="time" id="current-time">时:分</div>
+                    <div class="weather" id="weather">今日天气：晴🌤 27℃</div>
+                </div>
+                <div class="user-info">
+                    <img src="{{ url_for('static', filename='headshot/headtest.jpg') }}" alt="用户头像" class="avatar">
+                </div>
+                <div class="nav-section">
+                    <a href="/user/dashboard" class="nav-button">查看监控</a>
+                    <a href="/user/update_info" class="nav-button">用户中心</a>
+                    <a href="/pet/pet_register" class="nav-button">注册宠物</a>
+                    <a href="/pet/view_pet" class="nav-button">宠物信息</a>
+                    <a href="get_records" class="nav-button">记录查询</a>
+                    <a href="watchchart" class="nav-button">行为分析</a>
+                </div>
+            </div>
+            <div class="bottom-section">
+                <img src="{{ url_for('static', filename='webimage/menudec.jpg') }}" alt="装饰图片">
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="main-content-header">
+                <h2>行为分析</h2>
+                <!-- 保持原有的装饰图片 -->
+                <img src="{{ url_for('static', filename='webimage/monitordec2.png') }}" alt="装饰图片" class="monitor-decorative-image">
+            </div>
+            <div class="charts-container">
+                <!-- 上半部分，分成左右两半 -->
+                <div class="charts-row">
+                    <!-- 左侧饼状图 -->
+                    <div style="width: 45%;">
+                        <h2>宠物行为统计饼图</h2>
+                        <canvas id="behaviorPieChart" width="400" height="400"></canvas>
+                    </div>
+                    <!-- 右侧折线图 -->
+                    <div style="width: 45%;">
+                        <h2>宠物行为变化情况</h2>
+                        <canvas id="behaviorLineChart" width="400" height="400"></canvas>
+                    </div>
+                </div>
+
+                <!-- 下半部分，统计文本显示 -->
+                <div class="stats-container">
+                    <div class="stats-item">
+                        <img src="{{ url_for('static', filename='webimage/type1.png') }}" alt="类别1图标" class="stats-icon">
+                        <div class="stats-text">
+                            <div class="stats-number" id="category1-count">0</div>
+                            <div class="stats-label">宠物玩耍次数</div>
+                        </div>
+                    </div>
+                    <div class="stats-item">
+                        <img src="{{ url_for('static', filename='webimage/type2.png') }}" alt="类别2图标" class="stats-icon">
+                        <div class="stats-text">
+                            <div class="stats-number" id="category2-count">0</div>
+                            <div class="stats-label">宠物上厕所次数</div>
+                        </div>
+                    </div>
+                    <div class="stats-item">
+                        <img src="{{ url_for('static', filename='webimage/type4.png') }}" alt="类别3图标" class="stats-icon">
+                        <div class="stats-text">
+                            <div class="stats-number" id="category3-count">0</div>
+                            <div class="stats-label">宠物睡觉次数</div>
+                        </div>
+                    </div>
+                    <div class="stats-item">
+                        <img src="{{ url_for('static', filename='webimage/type3.png') }}" alt="类别4图标" class="stats-icon">
+                        <div class="stats-text">
+                            <div class="stats-number" id="category4-count">0</div>
+                            <div class="stats-label">宠物进食次数</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        // JavaScript 代码获取当前时间
+        function updateTime() {
+            const now = new Date();
+            const date = now.toLocaleDateString();
+            const options = { weekday: 'long' };
+            const weekday = new Intl.DateTimeFormat('zh-CN', options).format(now);
+            const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('current-date').innerText = date;
+            document.getElementById('current-weekday').innerText = weekday;
+            document.getElementById('current-time').innerText = time;
+        }
+
+        setInterval(updateTime, 1000); // 每秒更新一次时间
+
+        // 初始调用一次以显示当前时间
+        updateTime();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Function to fetch behavior data for Pie Chart
+        async function fetchBehaviorDataForPieChart() {
+            const response = await fetch('/video/behave_piechart');
+            const data = await response.json();
+            return data;
+        }
+
+        // Function to fetch behavior data for Line Chart
+        async function fetchBehaviorDataForLineChart() {
+            const response = await fetch('/video/behavior_linechart');
+            return await response.json();
+        }
+
+        // Function to create Pie Chart
+        async function createPieChart() {
+            const data = await fetchBehaviorDataForPieChart();
+            const labels = Object.keys(data);
+            const values = Object.values(data);
+
+            const ctx = document.getElementById('behaviorPieChart').getContext('2d');
+            const behaviorPieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Behavior Class Distribution'
+                        }
+                    }
+                },
+            });
+        }
+
+        // Function to create Line Chart
+        async function createLineChart() {
+            const data = await fetchBehaviorDataForLineChart();
+            const labels = ["早晨", "上午", "中午", "下午", "晚上"];
+            const datasets = [];
+
+            // 构建数据集
+            Object.keys(data).forEach(bclass => {
+                const color = getRandomColor(); // 随机颜色函数，用于每种类型的曲线
+                const dataset = {
+                    label: bclass,
+                    data: [],
+                    fill: false,
+                    borderColor: color,
+                    backgroundColor: color,
+                    borderWidth: 1
+                };
+
+                // 初始化每个时间段的计数为0
+                const periodCounts = {
+                    "早晨": 0,
+                    "上午": 0,
+                    "中午": 0,
+                    "下午": 0,
+                    "晚上": 0
+                };
+
+                // 填充数据
+                data[bclass].forEach(entry => {
+                    periodCounts[entry.Btime] = entry.count;
+                });
+
+                // 按顺序添加数据到dataset中
+                labels.forEach(period => {
+                    dataset.data.push(periodCounts[period]);
+                });
+
+                datasets.push(dataset);
+            });
+
+            // 创建图表
+            const ctx = document.getElementById('behaviorLineChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Behavior Frequency Over Time'
+                        }
+                    }
+                }
+            });
+        }
+
+        // 随机颜色函数（可选）
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        // Function to fetch category data
+        async function fetchCategoryData() {
+            const response = await fetch('/video/behave_category');
+            const data = await response.json();
+            return data;
+        }
+
+        // Function to update category statistics
+        async function updateCategoryStats() {
+            const data = await fetchCategoryData();
+            document.getElementById('category1-count').innerText = data['catplay'];
+            document.getElementById('category2-count').innerText = data['catbath'];
+            document.getElementById('category3-count').innerText = data['catsleep'];
+            document.getElementById('category4-count').innerText = data['cateat'];
+        }
+
+
+
+        // 页面加载完成后创建图表
+        document.addEventListener('DOMContentLoaded', function() {
+            createPieChart();
+            createLineChart();
+            updateCategoryStats();
+        });
+    </script>
+</body>
+</html>

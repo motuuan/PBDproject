@@ -1,10 +1,222 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户中心</title>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .button-link {
+            display: inline-block;
+            background-color: #007bff;
+            color: white; /* 改变文字颜色为白色 */
+            padding: 10px 20px;
+            text-decoration: none;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .button-link:hover {
+            background-color: #0056b3; /* 鼠标悬停时按钮颜色加深 */
+        }
+        .header img {
+            height: 40px;
+        }
+        .header a {
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .container {
+            width: 50%;
+            margin: 40px auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            margin-bottom: 10px;
+            font-size: 24px; /* 增大标题字体大小 */
+            color: #333;
+            text-align: center; /* 居中对齐 */
+        }
+        .section p {
+            margin: 5px 0;
+            text-align: center;
+        }
+        .section p span {
+            font-weight: bold; /* 加粗用户名 */
+        }
+        .section label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .section input, .section select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .section button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .section button:hover {
+            background-color: #0056b3;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .account-management-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .account-management-form button {
+            width: 50%;
+            margin-top: 10px;
+        }
+        .link-button {
+            font-size: 12px; /* 字体大小 */
+            text-decoration: none; /* 移除默认下划线 */
+            transition: color 0.3s, text-decoration 0.3s; /* 平滑过渡效果 */
+        }
+        .link-button.delete-account {
+            color: gray; /* 默认字体颜色 */
+        }
+        .link-button.delete-account:hover {
+            color: red; /* 鼠标悬停时的颜色 */
+            text-decoration: underline; /* 鼠标悬停时显示下划线 */
+        }
+        .link-button.logout {
+            color: gray; /* 默认字体颜色 */
+        }
+        .link-button.logout:hover {
+            color: blue; /* 鼠标悬停时的颜色 */
+            text-decoration: underline; /* 鼠标悬停时显示下划线 */
+        }
+        .link-button.left {
+            align-self: flex-start;
+        }
+        .link-button.right {
+            align-self: flex-end;
+        }
+        .account-management h2 {
+            font-size: 20px; /* 调整账号管理标题的字体大小 */
+        }
+        .profile-picture-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px; /* 将头像区域居中并与下方内容有一定间距 */
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .profile-picture {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .upload-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .profile-picture-container:hover .upload-overlay {
+            opacity: 1;
+        }
+
+        .upload-label {
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
+
+<div class="header">
+    <img src="{{ url_for('static', filename='webimage/logo - black.png') }}"  alt="Logo">
+    <a href="{{ url_for('user.dashboard') }}" class="button-link">回到主页</a>
+</div>
+
+<div class="container">
+    <div class="section">
+        <div class="profile-picture-container">
+            <div class="upload-overlay">
+                <label for="Uheadshot" class="upload-label">上传头像</label>
+                <input type="file" id="Uheadshot" name="Uheadshot" accept="image/*" style="display: none;" form="update-form"  >
+            </div>
+        </div>
+        <h2 class="centered-title">个人信息</h2>
+        <p class="centered-text">用户账号: <span>{{ user.Uid }}</span></p>
+    </div>
+
+    <div class="section account-management">
+        <h2>信息管理</h2>
+        <form id="update-form" action="{{ url_for('user.update_info') }}" method="post" class="account-management-form" enctype="multipart/form-data">
+            <label for="Uname">用户名</label>
+            <input type="text" id="Uname" name="Uname" value="{{ user.Uname }}" required>
+            <label for="Ugender">性别</label>
+            <select id="Ugender" name="Ugender" required>
+                <option value="male" {% if user.Ugender =='male' %} selected {% endif %}>男</option>
+                <option value="female" {% if user.Ugender =='female' %} selected {% endif %}>女</option>
+                <option value="unknown" {% if user.Ugender =='unknown' %} selected {% endif %}>未知</option>
+            </select>
+            <label for="Uphone">电话号码</label>
+            <input type="tel" id="Uphone" name="Uphone" value="{{ user.Uphone }}" required>
+            <label for="Upassword">新密码</label>
+            <input type="password" id="Upassword" name="Upassword">
+            <button type="submit" class="centered-button">更新信息</button>
+        </form>
+
+        <div class="button-container">
+            <a href="#" class="link-button delete-account" onclick="event.preventDefault(); document.getElementById('deleteForm').submit();">删除账号</a>
+
+            <form id="deleteForm" action="{{ url_for('user.delete_account') }}" method="POST" class="delete-account-form" style="display: none;">
+                <input type="hidden" name="Uid" value="{{ user.Uid }}">
+                <button type="submit" class="link-button delete-account">确认删除</button>
+            </form>
+
+            <a href="{{ url_for('user.logout') }}" class="link-button logout right">退出登录</a>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
